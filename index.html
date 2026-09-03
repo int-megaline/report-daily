@@ -58,14 +58,14 @@
         .report-list {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
 
         .report-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 24px;
+            padding: 18px 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
@@ -80,6 +80,14 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .meta-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .date-badge {
@@ -96,25 +104,26 @@
             color: var(--text-muted);
         }
 
-        .card-title {
-            font-size: 1.3rem;
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: -0.01em;
+        .card-actions {
+            display: flex;
+            gap: 6px;
         }
 
         .headline-list {
             list-style: none;
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
 
         .headline-list li {
             position: relative;
             padding-left: 16px;
             margin-bottom: 6px;
-            font-size: 0.95rem;
+            font-size: 0.93rem;
             color: #374151;
+        }
+
+        .headline-list li:last-child {
+            margin-bottom: 0;
         }
 
         .headline-list li::before {
@@ -125,21 +134,14 @@
             left: 0;
         }
 
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 16px;
-        }
-
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 4px 10px;
+            border-radius: 5px;
             text-decoration: none;
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, color 0.2s;
@@ -188,17 +190,18 @@
             container.innerHTML = reports.map(report => `
                 <div class="report-card">
                     <div class="card-meta">
-                        <span class="date-badge">${report.date}</span>
-                        <span class="issue-no">${report.issueNo}</span>
+                        <div class="meta-info">
+                            <span class="date-badge">${report.date}</span>
+                            <span class="issue-no">${report.issueNo}</span>
+                        </div>
+                        <div class="card-actions">
+                            <a href="${report.pageUrl}" class="btn btn-primary">요약 보고서</a>
+                            <a href="${report.pdfUrl}" class="btn btn-secondary" target="_blank" download>원본 기사</a>
+                        </div>
                     </div>
-                    <h2 class="card-title">${report.title}</h2>
                     <ul class="headline-list">
                         ${report.headlines.map(h => `<li>${h}</li>`).join('')}
                     </ul>
-                    <div class="card-actions">
-                        <a href="${report.pageUrl}" class="btn btn-primary">보고서 보기</a>
-                        <a href="${report.pdfUrl}" class="btn btn-secondary" target="_blank" download>PDF 다운로드</a>
-                    </div>
                 </div>
             `).join('');
         } catch (error) {
