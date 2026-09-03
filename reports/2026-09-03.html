@@ -257,19 +257,9 @@
         }
 
         @media print {
-            body {
-                background-color: white;
-                color: black;
-                padding: 0;
-            }
-            .header-controls {
-                display: none;
-            }
-            .card {
-                box-shadow: none;
-                border: 1px solid #ccc;
-                page-break-inside: avoid;
-            }
+            body { background-color: white; color: black; padding: 0; }
+            .header-controls { display: none; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -287,93 +277,88 @@
         <p id="header-subtitle"></p>
     </header>
 
-    <div class="grid-container" id="app-grid">
-        <!-- 스크립트를 통해 모듈화된 데이터가 로드됩니다 -->
-    </div>
+    <div class="grid-container" id="app-grid"></div>
 
     <footer>
         <h4>[출처 및 각주]</h4>
-        <ol id="references-list">
-            <!-- 출처 목록 동적 생성 -->
-        </ol>
+        <ol id="references-list"></ol>
     </footer>
 </div>
 
 <script>
-    // ==========================================
-    // 1. 모듈화된 데이터 객체 (Data Module)
-    // ==========================================
     const reportData = {
         meta: {
             title: "일간조선해양 핵심 요약 및 분석 보고서",
-            subtitle: "발행일: 2026년 9월 3일 (목) | 제02-4869호 주요 동향 분석",
-            pdfDriveUrl: "https://drive.google.com/uc?export=download&id=구글드라이브_파일_ID"
+            subtitle: "발행일: 2026년 09월 03일 | 제02-4869호 주요 동향 분석",
+            pdfDriveUrl: "https://drive.google.com/uc?export=download&id=1BmMJ7ctkgAThFGCdAkMBfslOcpOwSTzE"
         },
         metrics: [
-            { value: "6,600억 $", label: "글로벌 수주잔량(사상최대)", ref: 1 },
-            { value: "42척 (100%)", label: "中 초대형컨선 수주점유율", ref: 3 },
-            { value: "1억 7,332만 dwt", label: "전 세계 탱커 수주잔량", ref: 3 },
-            { value: "26만 9,824 $", label: "Suezmax 평균 일일 TCE", ref: 5 }
+            { label: "글로벌 수주잔량", value: "6,600억 달러", ref: "1" },
+            { label: "17,000TEU+ 중국 수주율", value: "100% (42척)", ref: "2" },
+            { label: "한화 Austal 인수 제시액", value: "최대 12억 달러", ref: "3" },
+            { label: "HD현대 LCO2 운송용량", value: "3배 향상 (저압)", ref: "4" },
+            { label: "Suezmax 최고 일일 TCE", value: "약 40만 달러", ref: "5" },
+            { label: "한화오션 VLGC 수주액", value: "4,778억 원", ref: "6" }
         ],
         sections: [
             {
-                title: "1. 글로벌 해운·조선 시황 및 수주 동향",
-                badge: "시황/전망",
+                title: "글로벌 선박 시황 및 수주잔량 동향",
+                badge: "시황 분석",
                 fullWidth: false,
                 items: [
-                    "<strong>수주잔량 사상 최고치:</strong> 글로벌 수주잔량이 6,600억 달러로 2024년 대비 약 30% 증가했으나, 지정학적 변수로 미래 선박 수요 예측은 난항 <a href='#ref-1' class='ref'>[1]</a>.",
-                    "<strong>신중한 발주 기조:</strong> 현재 수주잔량은 현존선대의 22% 수준으로 2008년 조선 붐(약 50%) 대비 낮아 선주들의 보수적 기조 지속 <a href='#ref-1' class='ref'>[1]</a>.",
-                    "<strong>탱커 수주잔량 급증:</strong> 지정학적 리스크로 탱커 수주잔량이 6개월 만에 140척(4,190만 dwt) 순증하며 1,267척 기록 <a href='#ref-3' class='ref'>[3]</a>.",
-                    "<strong>Suezmax 운임 강세:</strong> 호르무즈 해협 통과 차질로 우회 수송에 용이한 Suezmax 평균 TCE가 26만 9,824달러로 VLCC를 상회 <a href='#ref-5' class='ref'>[5]</a>."
+                    "Clarksons Research의 Stephen Gordon 대표는 글로벌 수주잔량이 6,600억 달러로 2024년 대비 30% 증가했으나, 현존선대의 22% 수준으로 2008년(50%)에 비해 선주들이 보수적으로 접근하고 있다고 분석했습니다 <a href=\"#ref-1\" class=\"ref\">[1]</a>.",
+                    "연간 해운 화물량은 130억 톤으로 성장을 이어가고 있으나, 중동 분쟁, 미국 관세, 제재 대상 탱커(전체의 25%) 증가 등 지정학적 변수로 인해 실제 필요한 선박 수 산정이 복잡해졌습니다 <a href=\"#ref-1\" class=\"ref\">[1]</a>.",
+                    "중동 무력충돌로 호르무즈 해협 통과 원유량이 하루 1,800만 배럴에서 200만 배럴로 급감함에 따라, 수에즈 운하 통항이 유연한 Suezmax급 원유운반선의 일일 TCE가 40만 달러에 육박하며 VLCC를 상회했습니다 <a href=\"#ref-5\" class=\"ref\">[5]</a>.",
+                    "지정학적 리스크 심화로 5년 선령 중고 VLCC 가격이 신조선가를 상회하는 이례적 현상이 발생했으며, 최근 6개월간 탱커 수주잔량이 140척(4,190만 dwt) 순증했습니다 <a href=\"#ref-7\" class=\"ref\">[7]</a>."
                 ],
-                chartId: "orderbookChart"
+                chartId: "chart-market"
             },
             {
-                title: "2. 친환경 규제, 탈탄소 및 신기술 동향",
-                badge: "친환경/기술",
+                title: "국제 환경규제 및 방산·기술 협력",
+                badge: "규제 / 방산",
                 fullWidth: false,
                 items: [
-                    "<strong>IMO Net-Zero Framework 착수:</strong> 11월 MEPC 85회 MARPOL 부속서 VI 개정안 정식 표결 예정으로 친환경 신조·개조 촉진 기대 <a href='#ref-2' class='ref'>[2]</a>.",
-                    "<strong>선박 탄소포집(OCCS) 부상:</strong> 대체연료 인프라 지연 대응책으로 OCCS가 주목받으나, 연료소비 15~30% 증가 과제 상존 <a href='#ref-4' class='ref'>[4]</a>.",
-                    "<strong>HD현대重 LCO2선 장영실상:</strong> 저압(7기압, 영하 50℃) 화물시스템 개발로 운송용량을 기존 대비 3배(22,000-cbm) 확충 <a href='#ref-3' class='ref'>[3]</a>.",
-                    "<strong>부유식 원전 데이터센터:</strong> AI 전력 수요 대응을 위해 1MW급 초소형 원자로(SMR) 탑재 부유식 데이터센터 등 해양 원전 적용 확대 <a href='#ref-5' class='ref'>[5]</a>."
-                ],
-                chartId: "tankerChart"
+                    "IMO 산하 ISWG 회의에서 넷제로 프레임워크(NZF) 세부 쟁점 조율에 착수했으며, 11월 MEPC 85 정례회의 표결을 앞두고 있어 조선사들의 장기 수주 및 밸류에이션 호재로 전망됩니다 <a href=\"#ref-8\" class=\"ref\">[8]</a>.",
+                    "백악관과 미 해군은 자국 조선소의 건조능력 부족 및 납기 지연에 대응해 한국의 충남급(FFX Batch-III), 일본 Mogami급, 튀르키예 Istanbul급 호위함 설계 및 건조능력 검토에 착수했습니다 <a href=\"#ref-9\" class=\"ref\">[9]</a>.",
+                    "한화그룹은 미국 함정 시장 진출을 위해 Austal USA 인수에 최대 12억 달러 예비 제안서를 제출하고 4주간의 정밀 실사에 돌입했습니다 <a href=\"#ref-3\" class=\"ref\">[3]</a>.",
+                    "독일 TKMS와 이탈리아 Fincantieri는 잠수함 및 수중 방산 분야 협력 MOU를 체결하여 유럽 해군 방산 산업 분절화 해소 및 비용 절감에 나섰습니다 <a href=\"#ref-10\" class=\"ref\">[10]</a>."
+                ]
             },
             {
-                title: "3. 글로벌 경쟁, 국방/해외 파트너십 및 기업 동향",
-                badge: "경쟁/방산/기업",
+                title: "조선 시장 경쟁 및 국내외 수주·기술 실적",
+                badge: "조선 / 기술",
                 fullWidth: true,
                 items: [
-                    "<strong>중국 고부가 선종 잠식:</strong> 올해 17,000-TEU급 이상 초대형 컨선 42척 전량 수주 및 LNG선 수주량(34척)에서 한국(32척)을 추월 <a href='#ref-3' class='ref'>[3]</a>.",
-                    "<strong>미 해군 우방국 호위함 검토:</strong> 미국 내 건조능력 부족 대응 위해 한국 충남급, 일본 Mogami급, 튀르키예 Istanbul급 설계 검토 <a href='#ref-2' class='ref'>[2]</a>.",
-                    "<strong>한화 Austal USA 인수 실사:</strong> 최대 12억 달러 제시 후 4주간 실사 진행 중, 기존 계약 손실 risk와 전략적 가치 양면 평가 <a href='#ref-2' class='ref'>[2]</a>.",
-                    "<strong>Dorian LPG VLGC 선대 재편:</strong> 노후선 매각 후 한화오션에 88,000-cbm급 VLGC 3척(4,778억 원) 신조 발주 추정 <a href='#ref-4' class='ref'>[4]</a>.",
-                    "<strong>유럽 잠수함 '동맹' 강화:</strong> 독일 TKMS와 이탈리아 Fincantieri가 수중 방산 분야 협력 MOU 체결로 글로벌 경쟁력 강화 <a href='#ref-4' class='ref'>[4]</a>.",
-                    "<strong>CII 강화에 개조 병목 우려:</strong> 2026년 CII 규제 11% 강화로 선박 개조 수요 몰리나 수리조선소 도크·인력 부족 우려 <a href='#ref-5' class='ref'>[5]</a>."
-                ]
+                    "코마린 컨퍼런스 2026에서 산업연구원 이은창 연구위원은 올해 발주된 17,000-teu급 이상 초대형 컨테이너선 42척을 중국이 전량 수주했으며, LNG선 수주도 중국이 34척으로 한국(32척)을 역전했다고 발표했습니다 <a href=\"#ref-2\" class=\"ref\">[2]</a>.",
+                    "HD현대중공업은 영하 50℃, 7기압 저압 화물시스템을 탑재하여 LCO₂ 운송량을 3배 확대한 기술로 제35주차 IR52 장영실상을 수상했습니다 <a href=\"#ref-4\" class=\"ref\">[4]</a>.",
+                    "한화오션은 오세아니아 선주(Dorian LPG 추정)로부터 88,000-cbm급 VLGC 3척(4,778억 원, 척당 1.16억 달러, 2030년 인도)을 수주했습니다 <a href=\"#ref-6\" class=\"ref\">[6]</a>.",
+                    "선박 탄소포집(OCCS) 및 초소형 원자로(1MW급 Unity Nuclear Battery, LR AiP 획득) 탑재 부유식 데이터센터/선박 등 신기술이 대체연료 인프라 지연의 새로운 대안으로 부상하고 있습니다 <a href=\"#ref-11\" class=\"ref\">[11]</a>."
+                ],
+                chartId: "chart-competition"
             }
         ],
         references: [
-            { id: 1, text: "<strong>일간조선해양 제02-4869호 1면:</strong> \"향후 선박 수요 가늠 어려워\" (Clarksons Research Stephen Gordon 대표 SMM 2026 발표)" },
-            { id: 2, text: "<strong>일간조선해양 제02-4869호 2면:</strong> \"IMO 넷제로 재시동, 조선업 기대감\", \"美해군, 韓·日·튀르키예 호위함 검토\", \"한화, Austal USA 인수 셈법 복잡\"" },
-            { id: 3, text: "<strong>일간조선해양 제02-4869호 3면:</strong> \"中 조선, 고부가船 진격 '위협적'\", \"VLCC 호황, 신조 발주 '불씨'\", \"HD현대重, LCO2船 기술력 입증\"" },
-            { id: 4, text: "<strong>일간조선해양 제02-4869호 4면:</strong> \"선박 탄소포집, 탈탄소 해법 부상\", \"Dorian LPG, VLGC 선대 재편\", \"유럽 조선, 잠수함 '동맹' 강화\"" },
-            { id: 5, text: "<strong>일간조선해양 제02-4869호 5면:</strong> \"원전 품은 선박, 新시장 연다\", \"중동 항로 재편, Suezmax '주목'\", \"CII 강화에 선박 개조 '병목' 우려\"" }
+            { id: "1", text: "일간조선해양 제02-4869호 1면 - 향후 선박 수요 가늠 어려워 (Clarksons Research Stephen Gordon 대표 발표)" },
+            { id: "2", text: "일간조선해양 제02-4869호 2~3면 - 中 조선, 고부가船 진격 '위협적' (산업연구원 이은창 연구위원 발표)" },
+            { id: "3", text: "일간조선해양 제02-4869호 2면 - 한화, Austal USA 인수 셈법 복잡" },
+            { id: "4", text: "일간조선해양 제02-4869호 3면 - HD현대重, LCO2船 기술력 입증 (IR52 장영실상 수상)" },
+            { id: "5", text: "일간조선해양 제02-4869호 5면 - 중동 항로 재편, Suezmax '주목'" },
+            { id: "6", text: "일간조선해양 제02-4869호 4면 - Dorian LPG, VLGC 선대 재편 (한화오션 3척 수주)" },
+            { id: "7", text: "일간조선해양 제02-4869호 3면 - VLCC 호황, 신조 발주 '불씨'" },
+            { id: "8", text: "일간조선해양 제02-4869호 2면 - IMO 넷제로 재시동, 조선업 기대감" },
+            { id: "9", text: "일간조선해양 제02-4869호 2면 - 美 해군, 韓·日·튀르키예 호위함 검토 (USNI News 인용)" },
+            { id: "10", text: "일간조선해양 제02-4869호 4면 - 유럽 조선, 잠수함 '동맹' 강화" },
+            { id: "11", text: "일간조선해양 제02-4869호 4~5면 - 선박 탄소포집 및 원전 품은 선박 新시장" }
         ]
     };
 
-    let capacityChartInst = null;
-    let vlccChartInst = null;
+    let marketChartInst = null;
+    let competitionChartInst = null;
 
-    // ==========================================
-    // 2. 렌더링 엔진 (Render Engine)
-    // ==========================================
     function renderApp() {
         document.getElementById('header-title').innerText = reportData.meta.title;
         document.getElementById('header-subtitle').innerText = reportData.meta.subtitle;
 
-        // 구글 드라이브 PDF 링크 바인딩
         const pdfBtn = document.getElementById('btn-pdf-drive');
         if (pdfBtn && reportData.meta.pdfDriveUrl) {
             pdfBtn.href = reportData.meta.pdfDriveUrl;
@@ -427,97 +412,73 @@
         bindRefEvents();
     }
 
-    // ==========================================
-    // 3. 차트 생성 함수 (Chart.js)
-    // ==========================================
     function initCharts() {
         const isDark = document.body.classList.contains('dark-mode');
         const textColor = isDark ? '#e0e0e0' : '#2b2d42';
         const gridColor = isDark ? '#333333' : '#e9ecef';
 
-        const ctx1 = document.getElementById('orderbookChart')?.getContext('2d');
-        if (ctx1) {
-            if (capacityChartInst) capacityChartInst.destroy();
-            capacityChartInst = new Chart(ctx1, {
+        const ctxMarket = document.getElementById('chart-market');
+        if (ctxMarket) {
+            if (marketChartInst) marketChartInst.destroy();
+            marketChartInst = new Chart(ctxMarket, {
                 type: 'bar',
                 data: {
-                    labels: ['초대형 컨선 (17k TEU+)', 'LNG 운반선 (7월초 기준)'],
+                    labels: ['2024 SMM', '2026 SMM'],
+                    datasets: [{
+                        label: '글로벌 수주잔량 (십억 달러)',
+                        data: [508, 660],
+                        backgroundColor: ['#0077b6', '#0f3d61']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                        y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        const ctxComp = document.getElementById('chart-competition');
+        if (ctxComp) {
+            if (competitionChartInst) competitionChartInst.destroy();
+            competitionChartInst = new Chart(ctxComp, {
+                type: 'bar',
+                data: {
+                    labels: ['17,000TEU+ 컨선 (척)', 'LNG운반선 수주 (척)'],
                     datasets: [
                         {
-                            label: '중국 수주 (척)',
-                            data: [42, 34],
-                            backgroundColor: 'rgba(239, 68, 68, 0.85)',
-                            borderColor: 'rgba(239, 68, 68, 1)',
-                            borderWidth: 1
+                            label: '한국',
+                            data: [0, 32],
+                            backgroundColor: '#0f3d61'
                         },
                         {
-                            label: '한국 수주 (척)',
-                            data: [0, 32],
-                            backgroundColor: 'rgba(0, 180, 216, 0.85)',
-                            borderColor: 'rgba(0, 180, 216, 1)',
-                            borderWidth: 1
+                            label: '중국',
+                            data: [42, 34],
+                            backgroundColor: '#00b4d8'
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: '수주량 (척)', color: textColor },
-                            ticks: { color: textColor },
-                            grid: { color: gridColor }
-                        }
-                    },
                     plugins: {
                         legend: { labels: { color: textColor } }
-                    }
-                }
-            });
-        }
-
-        const ctx2 = document.getElementById('tankerChart')?.getContext('2d');
-        if (ctx2) {
-            if (vlccChartInst) vlccChartInst.destroy();
-            vlccChartInst = new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: ['2026년 1월', '2026년 7월'],
-                    datasets: [{
-                        label: '전체 탱커 수주잔량 (만 dwt)',
-                        data: [13142, 17332],
-                        fill: true,
-                        backgroundColor: 'rgba(0, 119, 182, 0.2)',
-                        borderColor: 'rgba(0, 119, 182, 1)',
-                        tension: 0.2,
-                        pointRadius: 6,
-                        pointBackgroundColor: 'rgba(0, 119, 182, 1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    },
                     scales: {
                         x: { ticks: { color: textColor }, grid: { color: gridColor } },
-                        y: {
-                            title: { display: true, text: '수주잔량 (만 dwt)', color: textColor },
-                            ticks: { color: textColor },
-                            grid: { color: gridColor }
-                        }
-                    },
-                    plugins: {
-                        legend: { labels: { color: textColor } }
+                        y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
                     }
                 }
             });
         }
     }
 
-    // ==========================================
-    // 4. 이벤트 연결
-    // ==========================================
     function bindRefEvents() {
         document.querySelectorAll('.ref').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
