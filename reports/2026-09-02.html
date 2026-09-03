@@ -1,0 +1,264 @@
+```
+    body.dark-mode {
+        --primary-color: #3a86ff;
+        --secondary-color: #48cae4;
+        --accent-color: #90e0ef;
+        --bg-color: #121212;
+        --card-bg: #1e1e1e;
+        --text-color: #e0e0e0;
+        --text-muted: #a0a0a0;
+        --border-color: #333333;
+        --metric-bg: #2a2a2a;
+        --badge-bg: #1c3d5a;
+        --badge-text: #90e0ef;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    body {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    header {
+        position: relative;
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 24px 20px;
+        background: linear-gradient(135deg, #0f3d61, #0077b6);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        font-weight: 700;
+    }
+
+    header p {
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+
+    .header-controls {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-control {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        backdrop-filter: blur(4px);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-control:hover {
+        background-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+        .grid-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .full-width {
+            grid-column: span 2;
+        }
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+
+    .badge {
+        background-color: var(--badge-bg);
+        color: var(--badge-text);
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .card-content {
+        flex: 1;
+    }
+
+    ul.summary-list {
+        list-style: none;
+    }
+
+    ul.summary-list li {
+        position: relative;
+        padding-left: 20px;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+    }
+
+    ul.summary-list li::before {
+        content: "•";
+        color: var(--secondary-color);
+        font-weight: bold;
+        font-size: 1.2rem;
+        position: absolute;
+        left: 0;
+        top: -2px;
+    }
+
+    .ref {
+        font-size: 0.75rem;
+        color: var(--secondary-color);
+        vertical-align: super;
+        font-weight: bold;
+        cursor: pointer;
+        margin-left: 2px;
+        text-decoration: none;
+    }
+
+    .ref:hover {
+        text-decoration: underline;
+    }
+
+    .chart-container {
+        position: relative;
+        width: 100%;
+        height: 280px;
+        margin-top: 15px;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .metric-card {
+        background-color: var(--metric-bg);
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+    }
+
+    .metric-value {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--secondary-color);
+    }
+
+    .metric-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    footer {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    footer h4 {
+        color: var(--text-color);
+        margin-bottom: 8px;
+    }
+
+    footer ol {
+        padding-left: 20px;
+    }
+
+    footer li {
+        margin-bottom: 6px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: background-color 0.5s ease;
+    }
+
+    footer li.highlight {
+        background-color: rgba(0, 180, 216, 0.25);
+        font-weight: bold;
+    }
+
+    @media print {
+        body {
+            background-color: white;
+            color: black;
+            padding: 0;
+        }
+        .header-controls {
+            display: none;
+        }
+        .card {
+            box-shadow: none;
+            border: 1px solid #ccc;
+            page-break-inside: avoid;
+        }
+    }
+</style>
+
+```
+
+```
+<div class="grid-container" id="app-grid"></div>
+
+<footer>
+    <h4>[출처 및 각주]</h4>
+    <ol id="references-list"></ol>
+</footer>
+
+```
