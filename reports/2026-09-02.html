@@ -1,264 +1,516 @@
-```
-    body.dark-mode {
-        --primary-color: #3a86ff;
-        --secondary-color: #48cae4;
-        --accent-color: #90e0ef;
-        --bg-color: #121212;
-        --card-bg: #1e1e1e;
-        --text-color: #e0e0e0;
-        --text-muted: #a0a0a0;
-        --border-color: #333333;
-        --metric-bg: #2a2a2a;
-        --badge-bg: #1c3d5a;
-        --badge-text: #90e0ef;
-    }
-
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-    body {
-        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        line-height: 1.6;
-        padding: 20px;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    header {
-        position: relative;
-        text-align: center;
-        margin-bottom: 30px;
-        padding: 24px 20px;
-        background: linear-gradient(135deg, #0f3d61, #0077b6);
-        color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    header h1 {
-        font-size: 1.8rem;
-        margin-bottom: 8px;
-        font-weight: 700;
-    }
-
-    header p {
-        font-size: 0.95rem;
-        opacity: 0.9;
-    }
-
-    .header-controls {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        display: flex;
-        gap: 8px;
-    }
-
-    .btn-control {
-        background-color: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.8rem;
-        font-weight: 600;
-        backdrop-filter: blur(4px);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-control:hover {
-        background-color: rgba(255, 255, 255, 0.35);
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    @media (min-width: 768px) {
-        .grid-container {
-            grid-template-columns: repeat(2, 1fr);
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일간조선해양 핵심 요약 및 분석 보고서</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #0f3d61;
+            --secondary-color: #0077b6;
+            --accent-color: #00b4d8;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --metric-bg: #f8fafc;
+            --badge-bg: #e0f2fe;
+            --badge-text: #0369a1;
         }
-        .full-width {
-            grid-column: span 2;
+
+        body.dark-mode {
+            --primary-color: #3a86ff;
+            --secondary-color: #48cae4;
+            --accent-color: #90e0ef;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333333;
+            --metric-bg: #2a2a2a;
+            --badge-bg: #1c3d5a;
+            --badge-text: #90e0ef;
         }
-    }
 
-    .card {
-        background-color: var(--card-bg);
-        border-radius: 12px;
-        padding: 24px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        border: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-    }
-
-    .card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 16px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid var(--border-color);
-    }
-
-    .card-title {
-        font-size: 1.25rem;
-        color: var(--primary-color);
-        font-weight: 700;
-    }
-
-    .badge {
-        background-color: var(--badge-bg);
-        color: var(--badge-text);
-        font-size: 0.75rem;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-weight: 600;
-    }
-
-    .card-content {
-        flex: 1;
-    }
-
-    ul.summary-list {
-        list-style: none;
-    }
-
-    ul.summary-list li {
-        position: relative;
-        padding-left: 20px;
-        margin-bottom: 12px;
-        font-size: 0.95rem;
-    }
-
-    ul.summary-list li::before {
-        content: "•";
-        color: var(--secondary-color);
-        font-weight: bold;
-        font-size: 1.2rem;
-        position: absolute;
-        left: 0;
-        top: -2px;
-    }
-
-    .ref {
-        font-size: 0.75rem;
-        color: var(--secondary-color);
-        vertical-align: super;
-        font-weight: bold;
-        cursor: pointer;
-        margin-left: 2px;
-        text-decoration: none;
-    }
-
-    .ref:hover {
-        text-decoration: underline;
-    }
-
-    .chart-container {
-        position: relative;
-        width: 100%;
-        height: 280px;
-        margin-top: 15px;
-    }
-
-    .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 12px;
-        margin-bottom: 15px;
-    }
-
-    .metric-card {
-        background-color: var(--metric-bg);
-        padding: 12px;
-        border-radius: 8px;
-        text-align: center;
-        border: 1px solid var(--border-color);
-    }
-
-    .metric-value {
-        font-size: 1.3rem;
-        font-weight: bold;
-        color: var(--secondary-color);
-    }
-
-    .metric-label {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-    }
-
-    footer {
-        margin-top: 30px;
-        padding: 20px;
-        background-color: var(--card-bg);
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        font-size: 0.85rem;
-        color: var(--text-muted);
-    }
-
-    footer h4 {
-        color: var(--text-color);
-        margin-bottom: 8px;
-    }
-
-    footer ol {
-        padding-left: 20px;
-    }
-
-    footer li {
-        margin-bottom: 6px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        transition: background-color 0.5s ease;
-    }
-
-    footer li.highlight {
-        background-color: rgba(0, 180, 216, 0.25);
-        font-weight: bold;
-    }
-
-    @media print {
-        body {
-            background-color: white;
-            color: black;
+        * {
+            box-sizing: border-box;
+            margin: 0;
             padding: 0;
+            transition: background-color 0.3s, color 0.3s;
         }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 24px 20px;
+            background: linear-gradient(135deg, #0f3d61, #0077b6);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
         .header-controls {
-            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
         }
+
+        .btn-control {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-control:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .full-width {
+                grid-column: span 2;
+            }
+        }
+
         .card {
-            box-shadow: none;
-            border: 1px solid #ccc;
-            page-break-inside: avoid;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .badge {
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        ul.summary-list {
+            list-style: none;
+        }
+
+        ul.summary-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        ul.summary-list li::before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .ref {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            vertical-align: super;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 2px;
+            text-decoration: none;
+        }
+
+        .ref:hover {
+            text-decoration: underline;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            margin-top: 15px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .metric-card {
+            background-color: var(--metric-bg);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer h4 {
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        footer ol {
+            padding-left: 20px;
+        }
+
+        footer li {
+            margin-bottom: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.5s ease;
+        }
+
+        footer li.highlight {
+            background-color: rgba(0, 180, 216, 0.25);
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                color: black;
+                padding: 0;
+            }
+            .header-controls {
+                display: none;
+            }
+            .card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-controls">
+            <a href="../index.html" class="btn-control" style="text-decoration: none;">홈으로</a>
+            <a id="btn-pdf-drive" href="#" class="btn-control" style="text-decoration: none;" target="_blank" download>PDF 다운로드</a>
+            <button class="btn-control" id="btn-theme">다크모드</button>
+            <button class="btn-control" id="btn-print">인쇄</button>
+        </div>
+        <h1 id="header-title"></h1>
+        <p id="header-subtitle"></p>
+    </header>
+
+    <div class="grid-container" id="app-grid"></div>
+
+    <footer>
+        <h4>[출처 및 각주]</h4>
+        <ol id="references-list"></ol>
+    </footer>
+</div>
+
+<script>
+    // 분석 내용에 따라 reportData 구성
+    const reportData = {
+        meta: {
+            title: "일간조선해양 핵심 요약 및 분석 보고서",
+            subtitle: "2026년 9월 조선·해양 산업 동향 및 수주 실적 분석 브리핑",
+            pdfDriveUrl: "https://drive.google.com/drive/my-drive"
+        },
+        metrics: [
+            { value: "335억 달러", label: "국내 빅3 누적 수주액", ref: "1" },
+            { value: "190억 달러", label: "글로벌 해양플랜트 수주", ref: "2" },
+            { value: "915.3억 위안", label: "China CSSC 상반기 매출", ref: "3" },
+            { value: "36조 원", label: "인도 Odisha 클러스터", ref: "4" }
+        ],
+        sections: [
+            {
+                title: "국내 대형 조선 3사 수주 현황 및 슈퍼사이클 분석",
+                badge: "국내 시장",
+                fullWidth: true,
+                chartId: "big3OrderChart",
+                items: [
+                    "HD한국조선해양, 삼성중공업, 한화오션 등 국내 조선 빅3의 누적 수주액이 친환경 고부가가치 선박 중심 호황에 힘입어 약 335억 달러를 기록함 <a href='#ref-1' class='ref'>[1]</a>",
+                    "HD한국조선해양은 총 162척, 180.8억 달러를 수주하여 연간 목표 수주액(233.1억 달러)의 77.6%를 달성함 <a href='#ref-1' class='ref'>[1]</a>",
+                    "삼성중공업은 FLNG 2기 및 LNG 운반선 14척 등 총 105억 달러를 수주하여 연간 목표(139억 달러)의 약 76%를 확보함 <a href='#ref-1' class='ref'>[1]</a>",
+                    "한화오션은 총 32척(약 59.4억 달러) 수주와 함께 오세아니아 선주 대상 4,778억 원 규모의 VLGC 3척 계약을 추가 체결함 <a href='#ref-1' class='ref'>[1]</a>"
+                ]
+            },
+            {
+                title: "글로벌 해양플랜트 신조 시장 및 중국 CSSC 성장 동향",
+                badge: "글로벌 시장",
+                fullWidth: false,
+                chartId: "offshoreShareChart",
+                items: [
+                    "글로벌 해양플랜트 신규 수주액은 190억 달러(108기)로 전년 동기 대비 30% 증가하며 신조 시장 회복세를 입증함 <a href='#ref-2' class='ref'>[2]</a>",
+                    "국가별 해양 수주 실적에서 중국이 154억 달러(79기)로 1위를 기록하였으며, 한국은 12억 달러(3기)로 2위를 차지함 <a href='#ref-2' class='ref'>[2]</a>",
+                    "China CSSC Holdings는 상반기 매출 915.3억 위안(전년비 26.01%↑) 및 수주액 1,193.86억 위안(93.06%↑)을 기록함 <a href='#ref-3' class='ref'>[3]</a>"
+                ]
+            },
+            {
+                title: "한·미 방산 협력 및 글로벌 인프라 정책 동향",
+                badge: "정책·방산",
+                fullWidth: false,
+                items: [
+                    "미 해군부 수석보좌관 방한 및 국내 major 조선소 현장 점검을 통한 함정 MRO 및 방산 협력 구체화 <a href='#ref-5' class='ref'>[5]</a>",
+                    "미국 MARAD, 조선금융 지원제도(Title XI) 신청 수수료 인하 및 행정 승인 절차 간소화 추진 <a href='#ref-5' class='ref'>[5]</a>",
+                    "인도 Odisha주, 2조 4,700억 루피(약 36조 원) 규모의 대형 조선 및 중공업 클러스터(NSHIPOL) 승인 <a href='#ref-4' class='ref'>[4]</a>",
+                    "국내 중소조선업계는 수주 회복세에도 불구하고 선수금환급보증(RG) 발급 한도 보증 지연이 당면 과제로 제시됨 <a href='#ref-6' class='ref'>[6]</a>"
+                ]
+            }
+        ],
+        references: [
+            { id: "1", text: "일간조선해양 - 국내 대형 조선 3사 누적 수주 실적 및 목표 달성률 집계" },
+            { id: "2", text: "Clarksons Research - 글로벌 해양플랜트 신규 수주 통계 및 국가별 비중" },
+            { id: "3", text: "China CSSC Holdings - 2026년 상반기 재무 실적 및 수주 공시" },
+            { id: "4", text: "Odisha State Government - NSHIPOL 대형 조선 중공업 클러스터 승인안" },
+            { id: "5", text: "U.S. Maritime Administration (MARAD) / 미 해군 - Title XI 개편 및 한미 방산 협력 보고" },
+            { id: "6", text: "중소조선연구원 - 국내 중소조선업계 RG 발급 현황 및 정책 제언" }
+        ]
+    };
+
+    let capacityChartInst = null;
+    let vlccChartInst = null;
+
+    function renderApp() {
+        document.getElementById('header-title').innerText = reportData.meta.title;
+        document.getElementById('header-subtitle').innerText = reportData.meta.subtitle;
+
+        const pdfBtn = document.getElementById('btn-pdf-drive');
+        if (pdfBtn && reportData.meta.pdfDriveUrl) {
+            pdfBtn.href = reportData.meta.pdfDriveUrl;
+        }
+
+        const grid = document.getElementById('app-grid');
+        grid.innerHTML = '';
+
+        const metricCardHtml = `
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-title">주요 한눈에 보기 수치</span>
+                    <span class="badge">현황 요약</span>
+                </div>
+                <div class="metrics-grid">
+                    ${reportData.metrics.map(m => `
+                        <div class="metric-card">
+                            <div class="metric-value">${m.value}</div>
+                            <div class="metric-label">${m.label} <a href="#ref-${m.ref}" class="ref">[${m.ref}]</a></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', metricCardHtml);
+
+        reportData.sections.forEach(sec => {
+            const cardHtml = `
+                <div class="card ${sec.fullWidth ? 'full-width' : ''}">
+                    <div class="card-header">
+                        <span class="card-title">${sec.title}</span>
+                        <span class="badge">${sec.badge}</span>
+                    </div>
+                    <div class="card-content">
+                        <ul class="summary-list">
+                            ${sec.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                        ${sec.chartId ? `<div class="chart-container"><canvas id="${sec.chartId}"></canvas></div>` : ''}
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', cardHtml);
+        });
+
+        const refList = document.getElementById('references-list');
+        refList.innerHTML = reportData.references.map(r => `
+            <li id="ref-${r.id}">${r.text}</li>
+        `).join('');
+
+        initCharts();
+        bindRefEvents();
+    }
+
+    function initCharts() {
+        const isDark = document.body.classList.contains('dark-mode');
+        const textColor = isDark ? '#e0e0e0' : '#2b2d42';
+        const gridColor = isDark ? '#333333' : '#e9ecef';
+
+        if (capacityChartInst) capacityChartInst.destroy();
+        if (vlccChartInst) vlccChartInst.destroy();
+
+        const big3Ctx = document.getElementById('big3OrderChart');
+        if (big3Ctx) {
+            capacityChartInst = new Chart(big3Ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['HD한국조선해양', '삼성중공업', '한화오션'],
+                    datasets: [
+                        {
+                            label: '누적 수주액 (억 달러)',
+                            data: [180.8, 105.0, 59.4],
+                            backgroundColor: '#0077b6'
+                        },
+                        {
+                            label: '연간 목표액 (억 달러)',
+                            data: [233.1, 139.0, 100.0],
+                            backgroundColor: '#90e0ef'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor } },
+                        title: { display: true, text: '2026년 국내 조선 빅3 수주 실적 및 목표 비교', color: textColor }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                        y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        const offshoreCtx = document.getElementById('offshoreShareChart');
+        if (offshoreCtx) {
+            vlccChartInst = new Chart(offshoreCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['중국 (154억$)', '한국 (12억$)', '기타 (24억$)'],
+                    datasets: [{
+                        data: [154, 12, 24],
+                        backgroundColor: ['#0f3d61', '#0077b6', '#00b4d8']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor } },
+                        title: { display: true, text: '해양플랜트 국가별 수주액 비중', color: textColor }
+                    }
+                }
+            });
         }
     }
-</style>
 
-```
+    function bindRefEvents() {
+        document.querySelectorAll('.ref').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
 
-```
-<div class="grid-container" id="app-grid"></div>
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetElement.classList.add('highlight');
+                    setTimeout(() => {
+                        targetElement.classList.remove('highlight');
+                    }, 2000);
+                }
+            });
+        });
+    }
 
-<footer>
-    <h4>[출처 및 각주]</h4>
-    <ol id="references-list"></ol>
-</footer>
+    document.getElementById('btn-theme').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('btn-theme').innerText = isDark ? '라이트모드' : '다크모드';
+        initCharts();
+    });
 
-```
+    document.getElementById('btn-print').addEventListener('click', () => {
+        window.print();
+    });
+
+    document.addEventListener('DOMContentLoaded', renderApp);
+</script>
+
+</body>
+</html>
