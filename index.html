@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일간조선해양 보고서 아카이브</title>
+    <style>
+        :root {
+            --primary-color: #0f3d61;
+            --secondary-color: #0077b6;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --border-color: #e9ecef;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 32px 20px;
+            background: linear-gradient(135deg, #0f3d61, #0077b6);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+
+        .report-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .report-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .report-card:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .date-badge {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .issue-no {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .headline-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .headline-list li {
+            position: relative;
+            padding-left: 16px;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+            color: #374151;
+        }
+
+        .headline-list li::before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0a2b45;
+        }
+
+        .btn-secondary {
+            background-color: #f1f3f5;
+            color: #343a40;
+            border: 1px solid #ced4da;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>일간조선해양 보고서 아카이브</h1>
+        <p>매일 업데이트되는 핵심 동향 및 시황 분석 리포트</p>
+    </header>
+
+    <div class="report-list" id="report-list">
+        <!-- 스크립트로 보고서 카드가 자동 생성됩니다 -->
+    </div>
+</div>
+
+<script>
+    async function loadReports() {
+        try {
+            const response = await fetch('./data/reports.json');
+            const reports = await response.json();
+            const container = document.getElementById('report-list');
+
+            container.innerHTML = reports.map(report => `
+                <div class="report-card">
+                    <div class="card-meta">
+                        <span class="date-badge">${report.date}</span>
+                        <span class="issue-no">${report.issueNo}</span>
+                    </div>
+                    <h2 class="card-title">${report.title}</h2>
+                    <ul class="headline-list">
+                        ${report.headlines.map(h => `<li>${h}</li>`).join('')}
+                    </ul>
+                    <div class="card-actions">
+                        <a href="${report.pageUrl}" class="btn btn-primary">보고서 보기</a>
+                        <a href="${report.pdfUrl}" class="btn btn-secondary" target="_blank" download>PDF 다운로드</a>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error("보고서 목록을 불러오는 중 오류 발생:", error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadReports);
+</script>
+
+</body>
+</html>
