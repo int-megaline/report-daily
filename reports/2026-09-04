@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일간조선해양 핵심 요약 및 분석 보고서</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #0f3d61;
+            --secondary-color: #0077b6;
+            --accent-color: #00b4d8;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --metric-bg: #f8fafc;
+            --badge-bg: #e0f2fe;
+            --badge-text: #0369a1;
+        }
+
+        body.dark-mode {
+            --primary-color: #3a86ff;
+            --secondary-color: #48cae4;
+            --accent-color: #90e0ef;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333333;
+            --metric-bg: #2a2a2a;
+            --badge-bg: #1c3d5a;
+            --badge-text: #90e0ef;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 24px 20px;
+            background: linear-gradient(135deg, #0f3d61, #0077b6);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .header-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-control {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-control:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .full-width {
+                grid-column: span 2;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .badge {
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        ul.summary-list {
+            list-style: none;
+        }
+
+        ul.summary-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        ul.summary-list li::before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .ref {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            vertical-align: super;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 2px;
+            text-decoration: none;
+        }
+
+        .ref:hover {
+            text-decoration: underline;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            margin-top: 15px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .metric-card {
+            background-color: var(--metric-bg);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer h4 {
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        footer ol {
+            padding-left: 20px;
+        }
+
+        footer li {
+            margin-bottom: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.5s ease;
+        }
+
+        footer li.highlight {
+            background-color: rgba(0, 180, 216, 0.25);
+            font-weight: bold;
+        }
+
+        @media print {
+            body { background-color: white; color: black; padding: 0; }
+            .header-controls { display: none; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-controls">
+            <a href="../index.html" class="btn-control" style="text-decoration: none;">홈으로</a>
+            <a id="btn-pdf-drive" href="#" class="btn-control" style="text-decoration: none;" target="_blank" download>PDF 다운로드</a>
+            <button class="btn-control" id="btn-theme">다크모드</button>
+            <button class="btn-control" id="btn-print">인쇄</button>
+        </div>
+        <h1 id="header-title"></h1>
+        <p id="header-subtitle"></p>
+    </header>
+
+    <div class="grid-container" id="app-grid"></div>
+
+    <footer>
+        <h4>[출처 및 각주]</h4>
+        <ol id="references-list"></ol>
+    </footer>
+</div>
+
+<script>
+    const reportData = {
+        meta: {
+            title: "일간조선해양 핵심 요약 및 분석 보고서",
+            subtitle: "발행일: 2026년 09월 04일 | 제02-4870호 주요 동향 분석",
+            pdfDriveUrl: "https://drive.google.com/uc?export=download&id=1LUmCA9K4nTUBvRqIFFwG4aRfHEwgSWED"
+        },
+        metrics: [
+            { label: "HD현대重 미 발전 수주", value: "1.5조원+", ref: "1" },
+            { label: "8월 대체연료船 발주량", value: "52척", ref: "2" },
+            { label: "한화오션 컨선 수주액", value: "11.3억불", ref: "3" },
+            { label: "Hanwha Philly 목표 건조", value: "연 20척", ref: "4" },
+            { label: "한화오션 올해 상선 수주", value: "51.5억불", ref: "5" }
+        ],
+        sections: [
+            {
+                title: "1. K-조선, 비(非)상선 분야 신규 수익원 창출 가속",
+                badge: "사업 다각화",
+                fullWidth: true,
+                items: [
+                    "HD현대중공업, 힘센엔진 기반 미국 데이터센터 겨냥 육상 발전 시장 진출: Aperion Energy(6,271억원) 및 Corban Energy(6.738억 달러)와 수주 계약 체결하며 올해 미 발전설비 수주액 1조 5,000억원 돌파 <a href='#ref-1' class='ref'>[1]</a>",
+                    "HD현대중공업, 미국 TerraPower 추진 Natrium 원자로 관련 기기 제작 및 핵심 설비 공급 참여로 원전 제작 인프라 확장 <a href='#ref-1' class='ref'>[1]</a>",
+                    "삼성중공업, 50MW급 부유식 데이터센터(FDC) 기술 공개 및 기본설계 인증(AiP) 확보, ABB 등과 상용화 협력 및 부유식 SMR 표준 플랫폼 개발 병행 <a href='#ref-6' class='ref'>[6]</a>",
+                    "한화오션, 한화필리조선소와 TOTE Services의 컨소시엄을 통해 미 미사일방어청(MDA) 미사일 시험 계측선(MRIV) 사업자로 선정되며 미 국방 선박 시장 진출 본격화 <a href='#ref-7' class='ref'>[7]</a>"
+                ]
+            },
+            {
+                title: "2. 친환경 선박 발주 동향 및 대체연료 시장 급증",
+                badge: "시장 동향",
+                fullWidth: false,
+                chartId: "altFuelChart",
+                items: [
+                    "8월 월간 대체연료 선박 발주량 52척 기록 (2024년 10월 이후 22개월 만에 최고치 집계) <a href='#ref-2' class='ref'>[2]</a>",
+                    "1~8월 누적 대체연료 선박 발주량 242척으로 전년 동기 대비 27% 증가 <a href='#ref-2' class='ref'>[2]</a>",
+                    "LNG 이중연료 추진선이 전체 대체연료 발주의 63%를 차지하며 시장 우위 지속 <a href='#ref-2' class='ref'>[2]</a>",
+                    "선종별로는 컨테이너선(59%) 및 자동차운반선(30%)이 LNG 이중연료 발주 집중 조명 <a href='#ref-2' class='ref'>[2]</a>"
+                ]
+            },
+            {
+                title: "3. 조선사별 주요 수주 및 영업 실적",
+                badge: "수주 현황",
+                fullWidth: false,
+                chartId: "orderShareChart",
+                items: [
+                    "한화오션, 대만 Yang Ming사로부터 13,650-teu급 LNG 이중연료 컨선 6척 추가 수주 (척당 1.889억 달러, 총 11.3억 달러) <a href='#ref-3' class='ref'>[3]</a>",
+                    "한화오션 올해 상선 분야 누적 수주 실적 51억 5,200만 달러 기록, 2029년 인도 물량 31척 확보 <a href='#ref-5' class='ref'>[5]</a>",
+                    "영국 Zodiac Maritime, 삼성중공업 및 한화오션과 LNG운반선(2척 + 옵션 2척) 건조 슬롯 예약 협의 진행 <a href='#ref-8' class='ref'>[8]</a>"
+                ]
+            },
+            {
+                title: "4. 해외 글로벌 네트워크 및 생산 인프라 확충",
+                badge: "해외 진출",
+                fullWidth: true,
+                items: [
+                    "한화그룹, 미국 Hanwha Philly Shipyard 기존 야드 배치 재편 및 병목 해소 추진 (연간 건조 능력을 기존 1~1.5척에서 최대 20척으로 확대 목표) <a href='#ref-4' class='ref'>[4]</a>",
+                    "중국 CSSC - 독일선주협회(VDR), SMM 2026 전시회에서 공동 정상회의 개최하며 공급망 재편 및 지정학적 리스크 속 조선·해운 협력 유지 강화 <a href='#ref-1' class='ref'>[1]</a>",
+                    "삼성중공업 - 서울대학교 공과대학, 'SHI-SNU 미래선박기술 글로벌협력 연구센터' 설립 협약 체결로 친환경·원자력·자동화 R&D 강화 <a href='#ref-6' class='ref'>[6]</a>"
+                ]
+            }
+        ],
+        references: [
+            { id: "ref-1", text: "HD현대중공업, Aperion Energy(6,271억원) 및 Corban Energy(6.738억불) 발전설비 공급계약 체결로 올해 미 발전 시장 1.5조원 이상 수주 달성 (기사 1)" },
+            { id: "ref-2", text: "DNV 집계 기준 2026년 8월 대체연료 선박 발주량 52척 달성, 22개월 만에 월간 최고치 기록 (기사 2)" },
+            { id: "ref-3", text: "한화오션, 대만 Yang Ming Marine Transport로부터 13,650-teu급 LNG 이중연료 컨테이너선 6척 수주 (기사 3)" },
+            { id: "ref-4", text: "한화그룹, 미국 Hanwha Philly Shipyard 생산성 개선 작업 착수 및 연간 건조 목표 20척 확대 추진 (기사 5)" },
+            { id: "ref-5", text: "한화오션, 2026년 상선 누적 수주 51억 5,200만 달러 기록 및 2029년 납기 31척 확보 (기사 3)" },
+            { id: "ref-6", text: "삼성중공업, DCW 2026에서 50MW급 부유식 데이터센터(FDC) 공개 및 서울대와 SHI-SNU 미래선박기술 연구센터 설립 협약 (기사 1, 6)" },
+            { id: "ref-7", text: "한화필리조선소 및 TOTE Services, 미 미사일방어청(MDA) 미사일 시험 계측선(MRIV) 사업자로 선정 (기사 1)" },
+            { id: "ref-8", text: "영국 Zodiac Maritime, 삼성중공업 및 한화오션과 LNG운반선 건조 슬롯 협의 진행 (기사 7)" }
+        ]
+    };
+
+    let capacityChartInst = null;
+    let vlccChartInst = null;
+
+    function renderApp() {
+        document.getElementById('header-title').innerText = reportData.meta.title;
+        document.getElementById('header-subtitle').innerText = reportData.meta.subtitle;
+
+        const pdfBtn = document.getElementById('btn-pdf-drive');
+        if (pdfBtn && reportData.meta.pdfDriveUrl) {
+            pdfBtn.href = reportData.meta.pdfDriveUrl;
+        }
+
+        const grid = document.getElementById('app-grid');
+        grid.innerHTML = '';
+
+        const metricCardHtml = `
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-title">주요 한눈에 보기 수치</span>
+                    <span class="badge">현황 요약</span>
+                </div>
+                <div class="metrics-grid">
+                    ${reportData.metrics.map(m => `
+                        <div class="metric-card">
+                            <div class="metric-value">${m.value}</div>
+                            <div class="metric-label">${m.label} <a href="#ref-${m.ref}" class="ref">[${m.ref}]</a></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', metricCardHtml);
+
+        reportData.sections.forEach(sec => {
+            const cardHtml = `
+                <div class="card ${sec.fullWidth ? 'full-width' : ''}">
+                    <div class="card-header">
+                        <span class="card-title">${sec.title}</span>
+                        <span class="badge">${sec.badge}</span>
+                    </div>
+                    <div class="card-content">
+                        <ul class="summary-list">
+                            ${sec.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                        ${sec.chartId ? `<div class="chart-container"><canvas id="${sec.chartId}"></canvas></div>` : ''}
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', cardHtml);
+        });
+
+        const refList = document.getElementById('references-list');
+        refList.innerHTML = reportData.references.map(r => `
+            <li id="${r.id}">${r.text}</li>
+        `).join('');
+
+        initCharts();
+        bindRefEvents();
+    }
+
+    function initCharts() {
+        const isDark = document.body.classList.contains('dark-mode');
+        const textColor = isDark ? '#e0e0e0' : '#2b2d42';
+        const gridColor = isDark ? '#333333' : '#e9ecef';
+
+        const altCtx = document.getElementById('altFuelChart');
+        if (altCtx) {
+            if (capacityChartInst) capacityChartInst.destroy();
+            capacityChartInst = new Chart(altCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['6월', '7월', '8월'],
+                    datasets: [{
+                        label: '대체연료 선박 월별 발주량 (척)',
+                        data: [35, 47, 52],
+                        backgroundColor: isDark ? '#48cae4' : '#0077b6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor } },
+                        title: { display: true, text: '월별 대체연료 선박 발주 추이 (2026년)', color: textColor }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                        y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        const orderCtx = document.getElementById('orderShareChart');
+        if (orderCtx) {
+            if (vlccChartInst) vlccChartInst.destroy();
+            vlccChartInst = new Chart(orderCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['컨테이너선 (59%)', '자동차운반선 (30%)', '기타 (11%)'],
+                    datasets: [{
+                        data: [59, 30, 11],
+                        backgroundColor: ['#0f3d61', '#0077b6', '#00b4d8']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor } },
+                        title: { display: true, text: '8월 LNG 이중연료 발주 선종별 비중', color: textColor }
+                    }
+                }
+            });
+        }
+    }
+
+    function bindRefEvents() {
+        document.querySelectorAll('.ref').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetElement.classList.add('highlight');
+                    setTimeout(() => {
+                        targetElement.classList.remove('highlight');
+                    }, 2000);
+                }
+            });
+        });
+    }
+
+    document.getElementById('btn-theme').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('btn-theme').innerText = isDark ? '라이트모드' : '다크모드';
+        initCharts();
+    });
+
+    document.getElementById('btn-print').addEventListener('click', () => {
+        window.print();
+    });
+
+    document.addEventListener('DOMContentLoaded', renderApp);
+</script>
+
+</body>
+</html>
