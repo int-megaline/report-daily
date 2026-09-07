@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일간조선해양 핵심 요약 및 분석 보고서</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #0f3d61;
+            --secondary-color: #0077b6;
+            --accent-color: #00b4d8;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --metric-bg: #f8fafc;
+            --badge-bg: #e0f2fe;
+            --badge-text: #0369a1;
+        }
+
+        body.dark-mode {
+            --primary-color: #3a86ff;
+            --secondary-color: #48cae4;
+            --accent-color: #90e0ef;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333333;
+            --metric-bg: #2a2a2a;
+            --badge-bg: #1c3d5a;
+            --badge-text: #90e0ef;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 24px 20px;
+            background: linear-gradient(135deg, #0f3d61, #0077b6);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .header-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-control {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-control:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .full-width {
+                grid-column: span 2;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .badge {
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        ul.summary-list {
+            list-style: none;
+        }
+
+        ul.summary-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        ul.summary-list li::before {
+            content: "•";
+            color: var(--secondary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .ref {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            vertical-align: super;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 2px;
+            text-decoration: none;
+        }
+
+        .ref:hover {
+            text-decoration: underline;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            margin-top: 15px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .metric-card {
+            background-color: var(--metric-bg);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        footer h4 {
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        footer ol {
+            padding-left: 20px;
+        }
+
+        footer li {
+            margin-bottom: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.5s ease;
+        }
+
+        footer li.highlight {
+            background-color: rgba(0, 180, 216, 0.25);
+            font-weight: bold;
+        }
+
+        @media print {
+            body { background-color: white; color: black; padding: 0; }
+            .header-controls { display: none; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-controls">
+            <a href="../index.html" class="btn-control" style="text-decoration: none;">홈으로</a>
+            <a id="btn-pdf-drive" href="#" class="btn-control" style="text-decoration: none;" target="_blank" download>PDF 다운로드</a>
+            <button class="btn-control" id="btn-theme">다크모드</button>
+            <button class="btn-control" id="btn-print">인쇄</button>
+        </div>
+        <h1 id="header-title"></h1>
+        <p id="header-subtitle"></p>
+    </header>
+
+    <div class="grid-container" id="app-grid"></div>
+
+    <footer>
+        <h4>[출처 및 각주]</h4>
+        <ol id="references-list"></ol>
+    </footer>
+</div>
+
+<script>
+    const reportData = {
+        meta: {
+            title: "일간조선해양 핵심 요약 및 분석 보고서",
+            subtitle: "발행일: 2026년 09월 07일 | 제02-4871호 주요 동향 분석",
+            pdfDriveUrl: "https://drive.google.com/uc?export=download&id=1h1S6o58L-qEDRPtFXP5oP2yF0bwIPRdz"
+        },
+        metrics: [
+            { value: "420만 cgt", label: "8월 글로벌 신규 수주량", ref: "1" },
+            { value: "85%", label: "중국 8월 수주 점유율", ref: "1" },
+            { value: "11건 / 2,000억", label: "美 해군 MRO 누적 성과", ref: "2" },
+            { value: "186.29 pt", label: "클락슨 신조선가지수", ref: "3" },
+            { value: "1조 엔", label: "日 조선업 민관 투자액", ref: "4" },
+            { value: "3,400만 TEU", label: "글로벌 컨테이너 선대", ref: "5" }
+        ],
+        sections: [
+            {
+                title: "글로벌 신조선 시장 및 수주 동향",
+                badge: "시장 분석",
+                fullWidth: false,
+                items: [
+                    "2026년 8월 글로벌 신규 수주량은 420만cgt(125척)로 전월 대비 29%, 전년 동기 대비 24% 감소함 <a href=\"#ref-1\" class=\"ref\">[1]</a>.",
+                    "중국은 8월 359만cgt(107척)를 수주하며 점유율 85%로 독주한 반면, 한국은 31만cgt(10척, 7%)에 그침 <a href=\"#ref-1\" class=\"ref\">[1]</a>.",
+                    "1~8월 누계 수주량은 5,972만cgt로 전년 동기 대비 61% 증가했으며, 중국 점유율 76%(4,539만cgt), 한국 16%(938만cgt) 기록 <a href=\"#ref-1\" class=\"ref\">[1]</a>.",
+                    "8월 말 수주잔량은 중국 1억 4,539만cgt(67%), 한국 3,796만cgt(18%)로 양국 간 격차가 지속 확대됨 <a href=\"#ref-1\" class=\"ref\">[1]</a>."
+                ],
+                chartId: "orderShareChart"
+            },
+            {
+                title: "신조선가 지수 및 선종별 가격 흐름",
+                badge: "선가 동향",
+                fullWidth: false,
+                items: [
+                    "9월 4일 기준 클락슨 신조선가지수는 186.29pt로 전주(186.34pt) 대비 0.05pt(0.03%) 소폭 하락했으나 고점 유지 <a href=\"#ref-3\" class=\"ref\">[3]</a>.",
+                    "최근 5주 지수는 185.64 -> 185.64 -> 186.25 -> 186.34 -> 186.29pt로 강보합 흐름 지속 <a href=\"#ref-3\" class=\"ref\">[3]</a>.",
+                    "174,000-cbm급 LNG선만 유일하게 가격이 소폭 하락했으며, 주요 원유운반선, 컨테이너선, VLGC/VLAC는 전주 가격 유지 <a href=\"#ref-3\" class=\"ref\">[3]</a>."
+                ],
+                chartId: "shipPriceChart"
+            },
+            {
+                title: "방산·MRO 및 미·일 전략적 동향",
+                badge: "방산 & 정책",
+                fullWidth: true,
+                items: [
+                    "<b>美 해군 MRO 성과:</b> 한화오션(7건), HD현대중공업(3건), HJ중공업(1건) 등 국내 3개사가 진출 2년 만에 총 11건, 약 2,000억원 수주 실적 달성 <a href=\"#ref-2\" class=\"ref\">[2]</a>.",
+                    "<b>美 차세대 호위함 전망:</b> FF(X) 사업 예산(14.3억 달러) 및 입법 환경 변화로 '핀란드 모델' 적용 제한 예상... 미국 현지 조선소 인수/투자가 핵심 <a href=\"#ref-6\" class=\"ref\">[6]</a>.",
+                    "<b>일본의 조선 부흥책:</b> 2035년 건조량 2배 확대를 목표로 민관합동 1조엔(약 8.6조원) 투입... 이마바리(1,140억엔), JMU(494억엔), 나무라(499억엔) 1단계 지원 <a href=\"#ref-4\" class=\"ref\">[4]</a>.",
+                    "<b>국내 MRO 클러스터 과제:</b> 최근 10년간 연평균 6,654회 수리 수요 발생하나 대형선 해외 의존도 높음... 신조 계약 시 5~15년 장기 MRO 연계 계약 필요성 제기 <a href=\"#ref-7\" class=\"ref\">[7]</a>."
+                ]
+            },
+            {
+                title: "글로벌 해운 선대 및 국내외 조선 산업 이슈",
+                badge: "산업 이슈",
+                fullWidth: true,
+                items: [
+                    "<b>컨테이너 선대 팽창:</b> BIMCO에 따르면 글로벌 컨테이너선대가 5.5년 만에 42%(1,000만 TEU) 급증하며 사상 최초 3,400만 TEU 돌파 임박 <a href=\"#ref-5\" class=\"ref\">[5]</a>.",
+                    "<b>삼성중공업 부산 R&D 확장:</b> Delfin FLNG 수주 계기로 부산 문현금융단지에 86억원 투자하여 해양설계·영업·R&D 통합 거점 구축 <a href=\"#ref-8\" class=\"ref\">[8]</a>.",
+                    "<b>인도네시아 투자 가속:</b> 인도네시아 내 342개 가동 조선소(건조 100만dwt, 수리 1,200만dwt)를 발판으로 한국 조선사의 현지 투자 및 기술협력 논의 본격화 <a href=\"#ref-9\" class=\"ref\">[9]</a>.",
+                    "<b>경영성과급 쟁의 지침:</b> 고용노동부, 영업이익 연동 'N% 성과급' 요구는 노동조합법상 의무적 교섭 및 쟁의 대상 제외 지침 발표 <a href=\"#ref-10\" class=\"ref\">[10]</a>."
+                ]
+            }
+        ],
+        references: [
+            { id: "1", text: "일간조선해양 (2026.09.07) - 조선업 수주 주춤...中은 '독주' (Clarksons Research 분석)" },
+            { id: "2", text: "일간조선해양 (2026.09.07) - 韓 조선, 美 해군 MRO 11건 성과 (미 연방조달 자료)" },
+            { id: "3", text: "일간조선해양 (2026.09.07) - 신조선가, 186pt대서 소폭 하락 (Clarksons Research)" },
+            { id: "4", text: "일간조선해양 (2026.09.07) - 日, 조선업 부흥에 대규모 투자 (일본 국토교통성 발표)" },
+            { id: "5", text: "일간조선해양 (2026.09.07) - 컨테이너선대 대형화·팽창 가속 (BIMCO 리포트)" },
+            { id: "6", text: "일간조선해양 (2026.09.07) - 美 호위함, '핀란드 모델' 한계 (한국투자증권 강경태 연구원)" },
+            { id: "7", text: "일간조선해양 (2026.09.07) - MRO 키우는 韓, 수리조선 기반 과제 (MASGA 토론회)" },
+            { id: "8", text: "일간조선해양 (2026.09.07) - 삼성重, 부산 해양설계 거점 키운다 (부산시 투자 MOU)" },
+            { id: "9", text: "일간조선해양 (2026.09.07) - 韓 조선, 印尼 시장 투자 '시동' (인도네시아 TEMPO/IMATAP)" },
+            { id: "10", text: "일간조선해양 (2026.09.07) - 조선업 'N% 성과급' 제동 걸리나 (고용노동부 시행지침)" }
+        ]
+    };
+
+    let capacityChartInst = null;
+    let vlccChartInst = null;
+
+    function renderApp() {
+        document.getElementById('header-title').innerText = reportData.meta.title;
+        document.getElementById('header-subtitle').innerText = reportData.meta.subtitle;
+
+        const pdfBtn = document.getElementById('btn-pdf-drive');
+        if (pdfBtn && reportData.meta.pdfDriveUrl) {
+            pdfBtn.href = reportData.meta.pdfDriveUrl;
+        }
+
+        const grid = document.getElementById('app-grid');
+        grid.innerHTML = '';
+
+        const metricCardHtml = `
+            <div class="card full-width">
+                <div class="card-header">
+                    <span class="card-title">주요 한눈에 보기 수치</span>
+                    <span class="badge">현황 요약</span>
+                </div>
+                <div class="metrics-grid">
+                    ${reportData.metrics.map(m => `
+                        <div class="metric-card">
+                            <div class="metric-value">${m.value}</div>
+                            <div class="metric-label">${m.label} <a href="#ref-${m.ref}" class="ref">[${m.ref}]</a></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', metricCardHtml);
+
+        reportData.sections.forEach(sec => {
+            const cardHtml = `
+                <div class="card ${sec.fullWidth ? 'full-width' : ''}">
+                    <div class="card-header">
+                        <span class="card-title">${sec.title}</span>
+                        <span class="badge">${sec.badge}</span>
+                    </div>
+                    <div class="card-content">
+                        <ul class="summary-list">
+                            ${sec.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                        ${sec.chartId ? `<div class="chart-container"><canvas id="${sec.chartId}"></canvas></div>` : ''}
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', cardHtml);
+        });
+
+        const refList = document.getElementById('references-list');
+        refList.innerHTML = reportData.references.map(r => `
+            <li id="ref-${r.id}">${r.text}</li>
+        `).join('');
+
+        initCharts();
+        bindRefEvents();
+    }
+
+    function initCharts() {
+        const isDark = document.body.classList.contains('dark-mode');
+        const textColor = isDark ? '#e0e0e0' : '#2b2d42';
+        const gridColor = isDark ? '#333333' : '#e9ecef';
+
+        const ctx1 = document.getElementById('orderShareChart');
+        if (ctx1) {
+            if (capacityChartInst) capacityChartInst.destroy();
+            capacityChartInst = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['중국', '한국', '기타'],
+                    datasets: [{
+                        label: '2026년 1~8월 누적 수주량 (만 cgt)',
+                        data: [4539, 938, 495],
+                        backgroundColor: ['#0077b6', '#00b4d8', '#a0a0a0'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor } },
+                        title: { display: true, text: '2026년 1~8월 국가별 누적 수주량 (만 cgt)', color: textColor }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                        y: { ticks: { color: textColor }, grid: { color: gridColor } }
+                    }
+                }
+            });
+        }
+
+        const ctx2 = document.getElementById('shipPriceChart');
+        if (ctx2) {
+            if (vlccChartInst) vlccChartInst.destroy();
+            vlccChartInst = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['8월 초', '8월 2주', '8월 3주', '8월 4주', '9월 1주(9.4)'],
+                    datasets: [{
+                        label: '클락슨 신조선가지수 (pt)',
+                        data: [185.64, 185.64, 186.25, 186.34, 186.29],
+                        borderColor: '#0f3d61',
+                        backgroundColor: 'rgba(15, 61, 97, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor } },
+                        title: { display: true, text: '최근 5주간 신조선가지수 동향 (pt)', color: textColor }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                        y: { 
+                            min: 184, 
+                            max: 188,
+                            ticks: { color: textColor }, 
+                            grid: { color: gridColor } 
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function bindRefEvents() {
+        document.querySelectorAll('.ref').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetElement.classList.add('highlight');
+                    setTimeout(() => {
+                        targetElement.classList.remove('highlight');
+                    }, 2000);
+                }
+            });
+        });
+    }
+
+    document.getElementById('btn-theme').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('btn-theme').innerText = isDark ? '라이트모드' : '다크모드';
+        initCharts();
+    });
+
+    document.getElementById('btn-print').addEventListener('click', () => {
+        window.print();
+    });
+
+    document.addEventListener('DOMContentLoaded', renderApp);
+</script>
+
+</body>
+</html>
